@@ -10,10 +10,10 @@ classdef GeometryBuilder
             switch type
                 case 'FEM'
                     switch name
-                        case 'UnitCube_1_1_1'
-                            geometry = Geometry.GeometryBuilder.FEM_UnitCube_1_1_1([]);
-                        case 'UnitCube_2_2_2'
-                            geometry = Geometry.GeometryBuilder.FEM_UnitCube_2_2_2([]);
+%                         case 'UnitCube_1_1_1'
+%                             geometry = Geometry.GeometryBuilder.FEM_UnitCube_1_1_1([]);
+%                         case 'UnitCube_2_2_2'
+%                             geometry = Geometry.GeometryBuilder.FEM_UnitCube_2_2_2([]);
                         case 'XML'
                             if(~isempty(varargin))
                                 path = varargin{1};
@@ -27,6 +27,24 @@ classdef GeometryBuilder
                         otherwise
                             disp('Warning <GeometryBuilder>!');
                             disp('> name in FEM type was not exist!');
+                            disp('> empty geometry builded!');
+                            geometry = []; 
+                    end
+                case 'FVM'
+                    switch name
+                        case 'XML'
+                            if(~isempty(varargin))
+                                path = varargin{1};
+                                geometry = Geometry.GeometryBuilder.FEM_XML( path );
+                            else
+                                disp('Warning <GeometryBuilder - FVM> - XML');
+                                disp('> The XML file path should be assigned!');
+                                geometry = []; 
+                            end
+                            
+                        otherwise
+                            disp('Warning <GeometryBuilder>!');
+                            disp('> name in FVM type was not exist!');
                             disp('> empty geometry builded!');
                             geometry = []; 
                     end
@@ -67,8 +85,15 @@ classdef GeometryBuilder
                 	geometry = [];
             end
         end
+        
+        function addMeshTopology(geo, geo_dim)
+           import Geometry.Topology.*
+           topo = MeshTopology(geo_dim);
+           
+           geo.num_topology_ = geo.num_topology_ + 1;
+           geo.topology_data_{end +1} = topo;
+        end        
     end
-    
     
     methods(Static, Access = private)
         geometry = FEM_UnitCube_1_1_1(var);
@@ -79,6 +104,8 @@ classdef GeometryBuilder
         geometry = IGA_CylinderSurface(varargin);
         geometry = IGA_Tool_Box(varargin);
         geometry = IGA_XML( path );
+        
+        geometry = FVM_TXT( path );
     end
 end
 

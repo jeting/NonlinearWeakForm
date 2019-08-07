@@ -6,6 +6,7 @@ classdef BoundaryElement < Utility.MeshUtility.Element
         neighbor_element_data_;
         neighbor_element_id_;
         orientation_;
+        normal_ = [];
     end
     
     methods
@@ -13,6 +14,19 @@ classdef BoundaryElement < Utility.MeshUtility.Element
             this@Utility.MeshUtility.Element(dim, node_id);
             this.neighbor_element_id_ = neighbor_element_id;
             this.neighbor_element_data_ = neighbor_element_data;
+            this.num_node_ = length(node_id);
+            
+            import Utility.MeshUtility.ElementType
+            switch dim
+                case 1
+                    if(this.num_node_ == 2)
+                        this.element_type_ = ElementType.Line2;
+                    end
+                case 2
+                    if(this.num_node_ == 4)
+                        this.element_type_ = ElementType.Quad4;
+                    end
+            end
         end
         
         function generateOrientation(this)
